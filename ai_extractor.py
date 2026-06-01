@@ -37,7 +37,7 @@ api_key = os.environ.get("GEMINI_API_KEY")
 def extract_deadlines(raw_text: str):
 
     client = genai.Client(api_key=api_key)
-    MODEL = "gemini-3.5-flash"
+    MODEL = "gemini-3.1-flash-lite"
     now = datetime.datetime.now()
     current_date = now.strftime('%Y-%m-%d') 
 
@@ -55,7 +55,7 @@ def extract_deadlines(raw_text: str):
     config=types.GenerateContentConfig(
         response_mime_type="application/json",
         response_schema=ScheduleContainer, # <-- This forces Gemini to follow your Pydantic model structure!
-        system_instruction=f"""You are a strict data formatting assistant. Extract the events, absolute dates, and times. Ensure dates strictly use YYYY-MM-DD and assume the year is 2026 unless specified otherwise and categorize, prioritize the data based on the schema structure.
+        system_instruction=f"""You are a strict data formatting assistant. Extract the events, absolute dates, and times. Ensure dates strictly use YYYY-MM-DD and assume the year is 2026 unless specified otherwise and categorize, prioritize the data based on the schema structure. You also have to determine if the date is tentative or fixed and provide notes if it's tentative based on the schema structure.
 
         IMPORTANT CONTEXT: TODAY'S DATE IS {current_date}.
         If relative date expressions are used like ("two weeks from today", "next Friday", "three days after that"),calculate the exact calendar absolute date using {current_date} as your starting point.
